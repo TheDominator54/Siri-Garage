@@ -41,7 +41,7 @@ exports.accessory = {
       onUpdate: null,
       perms: ["pr"],
       format: "string",
-      initialValue: "Dom is smart",
+      initialValue: "Oltica",
       supportEvents: false,
       supportBonjour: false,
       manfDescription: "Manufacturer",
