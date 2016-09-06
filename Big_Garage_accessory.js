@@ -8,6 +8,7 @@ var options = {
   clientId: 'DomPi_Big_garage'
 };
 var client = mqtt.connect(options);
+mqtt.subscribe('BigGarage');
 console.log("Big Garage Connected to MQTT broker");
 client.publish('BigGarage', 'Connected');
 
@@ -40,7 +41,7 @@ exports.accessory = {
       onUpdate: null,
       perms: ["pr"],
       format: "string",
-      initialValue: "Oltica",
+      initialValue: "Dom is smart",
       supportEvents: false,
       supportBonjour: false,
       manfDescription: "Manufacturer",
