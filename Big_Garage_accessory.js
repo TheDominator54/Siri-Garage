@@ -8,7 +8,8 @@ var options = {
   clientId: 'DomPi_Big_garage'
 };
 var client = mqtt.connect(options);
-console.log("ChristmasLight Connected to MQTT broker");
+console.log("Big Garage Connected to MQTT broker");
+client.publish('BigGarage', 'Connected');
 
 // HomeKit types required
 var types = require("./types.js");
@@ -19,7 +20,7 @@ var execute = function(accessory,characteristic,value) {
 };
 
 exports.accessory = {
-  displayName: "Garage Door Opener",
+  displayName: "Big Garage Door Opener",
   username: "3C:5A:3D:EE:5E:FA",
   pincode: "031-45-154",
   services: [{
@@ -29,7 +30,7 @@ exports.accessory = {
       onUpdate: null,
       perms: ["pr"],
       format: "string",
-      initialValue: "Garage Door Opener",
+      initialValue: "Big Garage Door Opener",
       supportEvents: false,
       supportBonjour: false,
       manfDescription: "Name of the accessory",
