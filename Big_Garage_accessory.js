@@ -8,7 +8,7 @@ var options = {
   clientId: 'DomPi_Big_garage'
 };
 var client = mqtt.connect(options);
-mqtt.subscribe('BigGarage');
+client.subscribe('BigGarage');
 console.log("Big Garage Connected to MQTT broker");
 client.publish('BigGarage', 'Connected');
 
