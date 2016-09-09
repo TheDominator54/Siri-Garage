@@ -34,11 +34,11 @@ client.on('message', (topic, message) => {
 })
 
 function handlemessage (message) {  
-  if (message = "open") {
+  if (message = 'open') {
     console.log("State set to open");
     GARAGE_DOOR.opened = true;
   }
-  else if (message = "closed") {
+  else if (message = 'closed') {
     console.log("State set to closed");
     GARAGE_DOOR.opened = false;
   }
