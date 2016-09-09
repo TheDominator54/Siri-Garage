@@ -1,6 +1,6 @@
 // Generate a consistent UUID for our GarageDoorOpener that will remain the same even when
 // restarting our server.
-var garageUUID = uuid.generate('hap-nodejs:accessories:garage');
+var garageUUID = 3cb095d2-efe6-42cc-adc8-00768865f6e7;
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our Garage opener.
 var garage = exports.accessory = new Accessory('Big Garage Door', garageUUID);
