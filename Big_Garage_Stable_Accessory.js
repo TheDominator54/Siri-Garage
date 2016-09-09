@@ -5,10 +5,10 @@ var mqtt = require('mqtt');
 var options = {
   port: 1883,
   host: '192.168.1.190',
-  clientId: 'DomPi_Light'
+  clientId: 'DomPi_Garage_Stable'
 };
 var client = mqtt.connect(options);
-console.log("Light Connected to MQTT broker");
+console.log("Garage_Stable Connected to MQTT broker");
 
 var Accessory = require('../').Accessory;
 var Service = require('../').Service;
@@ -42,7 +42,7 @@ var CHRISTMAS_LIGHT = {
 var lightUUID = uuid.generate('hap-nodejs:accessories:Christmaslight');
 
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake light.
-var light = exports.accessory = new Accessory('Light', lightUUID);
+var light = exports.accessory = new Accessory('Garage_Stable', lightUUID);
 
 // Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
 light.username = "2A:2B:3C:4D:5E:FF";
