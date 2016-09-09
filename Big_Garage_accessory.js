@@ -1,8 +1,23 @@
-// Generate a consistent UUID for our GarageDoorOpener that will remain the same even when
-// restarting our server.
-var garageUUID = 3cb095d2-efe6-42cc-adc8-00768865f6e7;
+// MQTT Setup
+var mqtt = require('mqtt');
+console.log("Connecting to MQTT broker...");
+var mqtt = require('mqtt');
+var options = {
+  port: 1883,
+  host: '192.168.1.190',
+  clientId: 'AdyPi_BigGarage'
+};
+var client = mqtt.connect(options);
+console.log("Big Garage Connected to MQTT broker");
 
-// This is the Accessory that we'll return to HAP-NodeJS that represents our Garage opener.
+var Accessory = require('../').Accessory;
+var Service = require('../').Service;
+var Characteristic = require('../').Characteristic;
+var uuid = require('../').uuid;
+
+var garageUUID = uuid.generate('hap-nodejs:accessories:BigGarage');
+
+// This is the Accessory that we'll return to HAP-NodeJS that represents our fake light.
 var garage = exports.accessory = new Accessory('Big Garage Door', garageUUID);
 
 // Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
