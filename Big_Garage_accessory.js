@@ -20,17 +20,39 @@ var garageUUID = uuid.generate('hap-nodejs:accessories:BigGarage');
 var garage = exports.accessory = new Accessory('Big Garage Door', garageUUID);
 
 //Fake Hardware
+client.on('connect', () => {  
+  client.subscribe('outTopic1')
+})
+
+client.on('message', (topic, message) => {  
+  switch (topic) {
+    case 'outTopic1':
+      console.log('Message recieved %s', message)
+      return handlemessage(message)
+  }
+  console.log('No handler for topic %s', topic)
+})
+
+function handlemessage (message) {  
+  if (message = "open") {
+    console.log("State set to open");
+    GARAGE_DOOR.opened = true;
+  }
+  else if (message = "closed") {
+    console.log("State set to closed");
+    GARAGE_DOOR.opened = false;
+  }
+}
+
 var GARAGE_DOOR = {
   opened: false,
   open: function() { 
     console.log("Opening the Garage!");
     client.publish('inTopic1', '0');
-    GARAGE_DOOR.opened = true;
   },
   close: function() { 
     console.log("Closing the Garage!");
     client.publish('inTopic1', '1');
-    GARAGE_DOOR.opened = false;
   },
   identify: function() {
     console.log("Identify the Garage");
