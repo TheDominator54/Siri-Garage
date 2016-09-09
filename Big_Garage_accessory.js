@@ -5,7 +5,7 @@ var mqtt = require('mqtt');
 var options = {
   port: 1883,
   host: '192.168.1.190',
-  clientId: 'AdyPi_BigGarage'
+  clientId: 'DomPi_BigGarage'
 };
 var client = mqtt.connect(options);
 console.log("Big Garage Connected to MQTT broker");
@@ -16,12 +16,32 @@ var Characteristic = require('../').Characteristic;
 var uuid = require('../').uuid;
 
 var garageUUID = uuid.generate('hap-nodejs:accessories:BigGarage');
-
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake light.
 var garage = exports.accessory = new Accessory('Big Garage Door', garageUUID);
 
+//Fake Hardware
+var GARAGE_DOOR = {
+  opened: false,
+  open: function() { 
+    console.log("Opening the Garage!");
+    client.publish('inTopic1', '0');
+    GARAGE_DOOR.opened = true;
+  },
+  close: function() { 
+    console.log("Closing the Garage!");
+    client.publish('inTopic1', '1');
+    GARAGE_DOOR.opened = false;
+  },
+  identify: function() {
+    console.log("Identify the Garage");
+    // nothing to do.
+  }
+};
+console.log("Garage door set as %s",GARAGE_DOOR.opened);
+
+
 // Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-garage.username = "C1:5D:3F:EE:5E:FA";
+garage.username = "C1:5D:3F:EE:5E:FB";
 garage.pincode = "031-45-154";
 
 // set some basic properties
