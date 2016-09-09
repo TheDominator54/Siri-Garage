@@ -8,9 +8,8 @@ var options = {
   clientId: 'DomPi_Big_garage'
 };
 var client = mqtt.connect(options);
-client.subscribe('BigGarage');
+client.subscribe('outTopic1');
 console.log("Big Garage Connected to MQTT broker");
-client.publish('BigGarage', 'Connected');
 
 // HomeKit types required
 var types = require("./types.js");
@@ -94,13 +93,13 @@ exports.accessory = {
       onUpdate: function(value) { 
         console.log("Change:",value); 
         execute("Garage Door - current door state", "Current State", value); 
-        client.publish('BigGarage', 'current Toggle');
+        client.publish('inTopic1', 'current Toggle');
       },
       onRead: function(callback) {
         console.log("Read:");
         execute("Garage Door - current door state", "Current State", null);
         callback(undefined); // only testing, we have no physical device to read from
-        client.publish('BigGarage', 'current State?');
+        client.publish('inTopic1', 'current State?');
       },
       perms: ["pr","ev"],
       format: "int",
@@ -117,13 +116,13 @@ exports.accessory = {
       onUpdate: function(value) { 
         console.log("Change:",value); 
         execute("Garage Door - target door state", "Current State", value); 
-        client.publish('BigGarage', 'target Toggle');
+        client.publish('inTopic1', 'target Toggle');
       },
       onRead: function(callback) {
         console.log("Read:");
         execute("Garage Door - target door state", "Current State", null);
         callback(undefined); // only testing, we have no physical device to read from
-        client.publish('BigGarage', 'target State?');
+        client.publish('inTopic1', 'target State?');
       },
       perms: ["pr","pw","ev"],
       format: "int",
@@ -135,25 +134,6 @@ exports.accessory = {
       designedMaxValue: 1,
       designedMinStep: 1,
       designedMaxLength: 1    
-    },{
-      cType: types.OBSTRUCTION_DETECTED_CTYPE,
-      onUpdate: function(value) { 
-        console.log("Change:",value); 
-        execute("Garage Door - obstruction detected", "Current State", value); 
-        client.publish('BigGarage', 'obstruction Toggle');
-      },
-      onRead: function(callback) {
-        console.log("Read:");
-        execute("Garage Door - obstruction detected", "Current State", null);
-        callback(undefined); // only testing, we have no physical device to read from
-        client.publish('BigGarage', 'Obstruction State?');
-      },
-      perms: ["pr","ev"],
-      format: "bool",
-      initialValue: false,
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "BlaBla"
     }]
   }]
 }
