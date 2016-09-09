@@ -63,8 +63,10 @@ console.log("Little Garage door set as %s",GARAGE_DOOR.opened);
 
 
 // Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-for (i = 0; i < 12; i++) { 
-    user[i] = Math.random() * (10 - 0);
+var i;
+var user = [0,0,0,0,0,0,0,0,0,0,0,0];
+for (var i = 0; i < 12; i++) {
+    user[i] = Math.trunc(Math.random() * (10));
 }
 
 garage.username = user;
