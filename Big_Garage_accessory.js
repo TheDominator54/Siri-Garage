@@ -47,15 +47,15 @@ function handlemessage (message) {
 var GARAGE_DOOR = {
   opened: false,
   open: function() { 
-    console.log("Opening the Garage!");
+    console.log("Opening the Big Garage!");
     client.publish('inTopic1', '0');
   },
   close: function() { 
-    console.log("Closing the Garage!");
+    console.log("Closing the Big Garage!");
     client.publish('inTopic1', '1');
   },
   identify: function() {
-    console.log("Identify the Garage");
+    console.log("Identify the Big Garage");
     // nothing to do.
   }
 };
@@ -121,11 +121,11 @@ garage
     var err = null; // in case there were any problems
 
     if (GARAGE_DOOR.opened) {
-      console.log("Query: Is Garage Open? Yes.");
+      console.log("Query: Is Big Garage Open? Yes.");
       callback(err, Characteristic.CurrentDoorState.OPEN);
     }
     else {
-      console.log("Query: Is Garage Open? No.");
+      console.log("Query: Is Big Garage Open? No.");
       callback(err, Characteristic.CurrentDoorState.CLOSED);
     }
   });
