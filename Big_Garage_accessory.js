@@ -1,139 +1,74 @@
-// MQTT Setup
-var mqtt = require('mqtt');
-console.log("Connecting to MQTT broker...");
-var mqtt = require('mqtt');
-var options = {
-  port: 1883,
-  host: '192.168.1.190',
-  clientId: 'DomPi_Big_garage'
-};
-var client = mqtt.connect(options);
-client.subscribe('outTopic1');
-console.log("Big Garage Connected to MQTT broker");
+// Generate a consistent UUID for our GarageDoorOpener that will remain the same even when
+// restarting our server.
+var garageUUID = uuid.generate('hap-nodejs:accessories:garage');
 
-// HomeKit types required
-var types = require("./types.js");
-var exports = module.exports = {};
+// This is the Accessory that we'll return to HAP-NodeJS that represents our Garage opener.
+var garage = exports.accessory = new Accessory('Big Garage Door', garageUUID);
 
-var execute = function(accessory,characteristic,value) {
-  console.log("executed accessory: " + accessory + ", and characteristic: " + characteristic + ", with value: " +  value + "."); 
-};
+// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
+garage.username = "C1:5D:3F:EE:5E:FA";
+garage.pincode = "031-45-154";
 
-exports.accessory = {
-  displayName: "Big Garage Door Opener",
-  username: "3C:5A:3D:EE:5E:FA",
-  pincode: "031-45-154",
-  services: [{
-    sType: types.ACCESSORY_INFORMATION_STYPE, 
-    characteristics: [{
-      cType: types.NAME_CTYPE, 
-      onUpdate: null,
-      perms: ["pr"],
-      format: "string",
-      initialValue: "Big Garage Door Opener",
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "Name of the accessory",
-      designedMaxLength: 255    
-    },{
-      cType: types.MANUFACTURER_CTYPE, 
-      onUpdate: null,
-      perms: ["pr"],
-      format: "string",
-      initialValue: "Oltica",
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "Manufacturer",
-      designedMaxLength: 255    
-    },{
-      cType: types.MODEL_CTYPE,
-      onUpdate: null,
-      perms: ["pr"],
-      format: "string",
-      initialValue: "Rev-1",
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "Model",
-      designedMaxLength: 255    
-    },{
-      cType: types.SERIAL_NUMBER_CTYPE, 
-      onUpdate: null,
-      perms: ["pr"],
-      format: "string",
-      initialValue: "A1S2NASF88EW",
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "SN",
-      designedMaxLength: 255    
-    },{
-      cType: types.IDENTIFY_CTYPE, 
-      onUpdate: null,
-      perms: ["pw"],
-      format: "bool",
-      initialValue: false,
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "Identify Accessory",
-      designedMaxLength: 1    
-    }]
-  },{
-    sType: types.GARAGE_DOOR_OPENER_STYPE, 
-    characteristics: [{
-      cType: types.NAME_CTYPE,
-      onUpdate: null,
-      perms: ["pr"],
-      format: "string",
-      initialValue: "Garage Door Opener Control",
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "Name of service",
-      designedMaxLength: 255   
-    },{
-      cType: types.CURRENT_DOOR_STATE_CTYPE,
-      onUpdate: function(value) { 
-        console.log("Change:",value); 
-        execute("Garage Door - current door state", "Current State", value); 
-        client.publish('inTopic1', 'current Toggle');
-      },
-      onRead: function(callback) {
-        console.log("Read:");
-        execute("Garage Door - current door state", "Current State", null);
-        callback(undefined); // only testing, we have no physical device to read from
-        client.publish('inTopic1', 'current State?');
-      },
-      perms: ["pr","ev"],
-      format: "int",
-      initialValue: 0,
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "BlaBla",
-      designedMinValue: 0,
-      designedMaxValue: 4,
-      designedMinStep: 1,
-      designedMaxLength: 1    
-    },{
-      cType: types.TARGET_DOORSTATE_CTYPE,
-      onUpdate: function(value) { 
-        console.log("Change:",value); 
-        execute("Garage Door - target door state", "Current State", value); 
-        client.publish('inTopic1', 'target Toggle');
-      },
-      onRead: function(callback) {
-        console.log("Read:");
-        execute("Garage Door - target door state", "Current State", null);
-        callback(undefined); // only testing, we have no physical device to read from
-        client.publish('inTopic1', 'target State?');
-      },
-      perms: ["pr","pw","ev"],
-      format: "int",
-      initialValue: 0,
-      supportEvents: false,
-      supportBonjour: false,
-      manfDescription: "BlaBla",
-      designedMinValue: 0,
-      designedMaxValue: 1,
-      designedMinStep: 1,
-      designedMaxLength: 1    
-    }]
-  }]
-}
+// set some basic properties
+garage
+  .getService(Service.AccessoryInformation)
+  .setCharacteristic(Characteristic.Manufacturer, "White")
+  .setCharacteristic(Characteristic.Model, "Rev-1")
+  .setCharacteristic(Characteristic.SerialNumber, "TW000165");
+
+// listen for the "identify" event for this Accessory
+garage.on('identify', function(paired, callback) {
+  GARAGE_DOOR.identify();
+  callback(); // success
+});
+
+// Add the actual Garage Opener Service and listen for change events from iOS.
+// We can see the complete list of Services and Characteristics in `lib/gen/HomeKitTypes.js`
+garage
+  .addService(Service.GarageDoorOpener, "Garage Door") 
+  .setCharacteristic(Characteristic.TargetDoorState, Characteristic.TargetDoorState.CLOSED) // force initial state to CLOSED
+  .getCharacteristic(Characteristic.TargetDoorState)
+  .on('set', function(value, callback) {
+
+    if (value == Characteristic.TargetDoorState.CLOSED) {
+      GARAGE_DOOR.close();
+      callback();
+
+      // now we want to set our garage "actual state" to be CLOSED so it shows as Closed in iOS apps
+      garage
+        .getService(Service.GarageDoorOpener)
+        .setCharacteristic(Characteristic.CurrentDoorState, Characteristic.CurrentDoorState.CLOSED);
+    }
+    else if (value == Characteristic.TargetDoorState.OPEN) {
+      GARAGE_DOOR.open();
+      callback();
+
+      // now we want to set our garage "actual state" to be OPEN so it shows as Open in iOS apps
+      garage
+        .getService(Service.GarageDoorOpener)
+        .setCharacteristic(Characteristic.CurrentDoorState, Characteristic.CurrentDoorState.OPEN);
+    }
+  });
+
+// We want to intercept requests for our current state so we can query the hardware itself instead of
+// allowing HAP-NodeJS to return the cached Characteristic.value.
+garage
+  .getService(Service.GarageDoorOpener)
+  .getCharacteristic(Characteristic.CurrentDoorState)
+  .on('get', function(callback) {
+
+    // this event is emitted when you ask Siri directly whether your gate is locked or not. you might query
+    // the gate hardware itself to find this out, then call the callback. But if you take longer than a
+    // few seconds to respond, Siri will give up.
+
+    var err = null; // in case there were any problems
+
+    if (GARAGE_DOOR.opened) {
+      console.log("Query: Is Garage Open? Yes.");
+      callback(err, Characteristic.CurrentDoorState.OPEN);
+    }
+    else {
+      console.log("Query: Is Garage Open? No.");
+      callback(err, Characteristic.CurrentDoorState.CLOSED);
+    }
+  });
