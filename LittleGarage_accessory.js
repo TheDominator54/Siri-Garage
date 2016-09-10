@@ -15,7 +15,7 @@ var Service = require('../').Service;
 var Characteristic = require('../').Characteristic;
 var uuid = require('../').uuid;
 
-var garageUUID = uuid.generate('hap-nodejs:accessories:BigGarage');
+var garageUUID = uuid.generate('hap-nodejs:accessories:LiitleGarage');
 // This is the Accessory that we'll return to HAP-NodeJS that represents our fake light.
 var garage = exports.accessory = new Accessory('Little Garage Door', garageUUID);
 
@@ -64,9 +64,9 @@ console.log("Little Garage door set as %s",GARAGE_DOOR.opened);
 
 // Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
 var i;
-var user = [0,0,0,0,0,0,0,0,0,0,0,0];
+var user = "";
 for (var i = 0; i < 12; i++) {
-    user[i] = Math.trunc(Math.random() * (10));
+    user += Math.trunc(Math.random() * (10));
 }
 
 garage.username = user;
