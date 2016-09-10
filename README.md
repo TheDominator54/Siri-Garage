@@ -1,7 +1,7 @@
 # Siri-Garage
 Pins
 Relay
-in1 D1
+in1 D1 /n
 in2 D2
 Big garage sensor
 trig D5
