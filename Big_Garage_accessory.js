@@ -63,7 +63,13 @@ console.log("Garage door set as %s",GARAGE_DOOR.opened);
 
 
 // Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-garage.username = "C1:5D:3F:EE:5E:FB";
+var i;
+var user = "";
+for (var i = 0; i < 12; i++) {
+    user += Math.trunc(Math.random() * (10));
+}
+
+garage.username = user;
 garage.pincode = "031-45-154";
 
 // set some basic properties
