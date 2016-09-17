@@ -7,7 +7,7 @@
  * topic 1 is Big Garage
  * topic 2 is little Garage
  */
-int mindist = 30;
+int mindist = 120;
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
@@ -198,4 +198,5 @@ void loop() {
   average1 = average1/5;
   average2 = average2/5;
   Serial.println(average1);
+  Serial.println(average2);
 }
